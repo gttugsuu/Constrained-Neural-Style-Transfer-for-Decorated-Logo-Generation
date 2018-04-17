@@ -19,9 +19,6 @@ def load_image(path_to_img, path_to_save, height, width, invert):
     image = cv2.resize(image, (width,height))
     print("image resized to ", image.shape) 
 
-    # Save granulometries
-    fig_granulometry(image,path_to_save,15)
-
     # Invert if necessary
     if invert == 1:
         image = 255.0-image

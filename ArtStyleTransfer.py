@@ -24,15 +24,15 @@ OUTPUT_DIR = 'output_Logo_generation/'
 
 # Content image to use.
 content_input_path = "input/contents/"
-content_with_ext   = "Walkway-Oblique-Bold.bmp"
+content_with_ext   = "bigA.bmp"
 content_image_path = content_input_path + content_with_ext
-content_image      = content_with_ext[:-4]
+content_name      = content_with_ext[:-4]
 
 # Style image to use.
 style_input_path   = "input/styles/"
 style_with_ext     = "bells.jpg"
 style_image_path   = style_input_path + style_with_ext
-style_image        = style_with_ext[:-4]
+style_name        = style_with_ext[:-4]
 
 # Image dimensions constants. 
 image = cv2.imread(content_image_path)
@@ -166,7 +166,7 @@ def shape_loss_func(sess, model, dist_template, dist_sum):
     
 if __name__ == '__main__':
     try:
-        OUTPUT_DIR = ("../output_Logo_generation/" + content_name + "_vs_" + style_name)
+        OUTPUT_DIR = ("output/" + content_name + "_vs_" + style_name)
         os.mkdir(OUTPUT_DIR)
     except:
         pass
@@ -176,8 +176,8 @@ if __name__ == '__main__':
         with tf.Session() as sess:          
 
             # Load images as tensors.
-            content_image = utility.load_image(CONTENT_IMAGE, OUTPUT_DIR+"/"+content_name+"_granu.jpg", IMAGE_HEIGHT, IMAGE_WIDTH, invert = content_invert)
-            style_image   = utility.load_image(STYLE_IMAGE, OUTPUT_DIR+"/"+style_name+"_granu.jpg", IMAGE_HEIGHT, IMAGE_WIDTH, invert = style_invert)
+            content_image = utility.load_image(CONTENT_IMAGE, OUTPUT_DIR+"/"+content_with_ext, IMAGE_HEIGHT, IMAGE_WIDTH, invert = content_invert)
+            style_image   = utility.load_image(STYLE_IMAGE, OUTPUT_DIR+"/"+style_with_ext, IMAGE_HEIGHT, IMAGE_WIDTH, invert = style_invert)
             utility.save_image(OUTPUT_DIR+"/"+style_name+".jpg", style_image, invert = style_invert)
             
             # Load the model.
