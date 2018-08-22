@@ -19,31 +19,32 @@ import model
 # Constants for the image input and output.
 ###############################################################################
 
-# Output folder for the images.e
-OUTPUT_DIR = 'output_Logo_generation/'
+# Output folder for the images.
+OUTPUT_DIR = 'output/'
 
 # Content image to use.
 content_input_path = "input/contents/"
-content_with_ext   = "bigA.bmp"
+content_with_ext   = "humans1.bmp"
 content_image_path = content_input_path + content_with_ext
-content_name      = content_with_ext[:-4]
+content_image      = content_with_ext[:-4]
 
 # Style image to use.
 style_input_path   = "input/styles/"
-style_with_ext     = "bells.jpg"
+style_with_ext     = "colorful_flower.jpg"
 style_image_path   = style_input_path + style_with_ext
-style_name        = style_with_ext[:-4]
+style_image        = style_with_ext[:-4]
 
 # Image dimensions constants. 
-image = cv2.imread(content_image_path)
-# IMAGE_HEIGHT, IMAGE_WIDTH, COLOR_CHANNELS = image.shape
-IMAGE_HEIGHT, IMAGE_WIDTH = 400,400
+# image = Image.open(content_image_path)  
+#IMAGE_WIDTH = image.size[0]
+IMAGE_WIDTH = 400
+IMAGE_HEIGHT = IMAGE_WIDTH
+COLOR_CHANNELS = 3
 
 # Invertion of images
 content_invert = 1
 style_invert = 1
 result_invert = content_invert
-
 ###############################################################################
 # Algorithm constants
 ###############################################################################
@@ -66,7 +67,7 @@ parser.add_argument("--CONTENT_IMAGE", "-CONTENT_IMAGE", default = content_image
 parser.add_argument("--STYLE_IMAGE", "-STYLE_IMAGE", default = style_image_path, help = "Path to style image")
 
 parser.add_argument("--alpha",  "-alpha",   default="0.001",   help="alpha")
-parser.add_argument("--beta",   "-beta",    default="1.0",     help="beta")
+parser.add_argument("--beta",   "-beta",    default="0.8",     help="beta")
 parser.add_argument("--gamma",  "-gamma",   default="0.001",    help="gamma")
 args = parser.parse_args()
 
@@ -85,11 +86,39 @@ gamma = float(args.gamma)
 CONTENT_IMAGE = str(args.CONTENT_IMAGE)
 STYLE_IMAGE = str(args.STYLE_IMAGE)
 
+# Splitting content path & name
+dot = 0
+slash = 0
+for c in reversed(CONTENT_IMAGE):
+    dot += 1
+    if c == ".":
+        break
+for c in reversed(CONTENT_IMAGE):
+    slash += 1 
+    if c =="/" or c =="\\":
+        break
+content_path = CONTENT_IMAGE[:1-slash]
+content_name = CONTENT_IMAGE[1-slash:-dot]
+
+# Splitting style path & name
+dot = 0 
+slash = 0 
+for c in reversed(STYLE_IMAGE):
+    dot += 1
+    if c == ".":
+        break
+for c in reversed(STYLE_IMAGE):
+    slash += 1
+    if c == "/" or c =="\\":
+        break
+style_path = STYLE_IMAGE[:1-slash]
+style_name = STYLE_IMAGE[1-slash:-dot]
+
 ###############################################################################
 
 def style_loss_func(sess, model):
     """
-    Style loss function.
+    Style loss function as defined in the paper.
     """
     def gram_matrix(F, N, M):
         """
@@ -113,7 +142,11 @@ def style_loss_func(sess, model):
         result = (1 / (4 * N**2 * M**2)) * tf.reduce_sum(tf.pow(G - A, 2))
         return result
 
-    # Layers to use.
+    # Layers to use. We will use these layers as advised in the paper.
+    # To have softer features, increase the weight of the higher layers
+    # (conv5_1) and decrease the weight of the lower layers (conv1_1).
+    # To have harder features, decrease the weight of the higher layers
+    # (conv5_1) and increase the weight of the lower layers (conv1_1).
     layers = [
             ('conv1_2', w1),
             ('conv2_2', w2),
@@ -129,7 +162,7 @@ def style_loss_func(sess, model):
 
 def content_loss_func(sess, model):
     """
-    Content loss function.
+    Content loss function as defined in the paper.
     """
     def content_loss(p, x):
         return 0.5 * tf.reduce_sum(tf.pow(x - p, 2))
@@ -175,50 +208,47 @@ if __name__ == '__main__':
     with tf.device("/gpu:0"):
         with tf.Session() as sess:          
 
-            # Load images as tensors.
-            content_image = utility.load_image(CONTENT_IMAGE, OUTPUT_DIR+"/"+content_with_ext, IMAGE_HEIGHT, IMAGE_WIDTH, invert = content_invert)
-            style_image   = utility.load_image(STYLE_IMAGE, OUTPUT_DIR+"/"+style_with_ext, IMAGE_HEIGHT, IMAGE_WIDTH, invert = style_invert)
-            utility.save_image(OUTPUT_DIR+"/"+style_name+".jpg", style_image, invert = style_invert)
+            # Load images.
+            content_image = utility.load_image(CONTENT_IMAGE, OUTPUT_DIR+'/'+content_with_ext, IMAGE_HEIGHT, IMAGE_WIDTH, invert = content_invert)
+            style_image   = utility.load_image(STYLE_IMAGE, OUTPUT_DIR+'/'+style_with_ext, IMAGE_HEIGHT, IMAGE_WIDTH, invert = style_invert)
+            utility.save_image(OUTPUT_DIR+"/"+style_name+".png", style_image, invert = style_invert)
             
             # Load the model.
             model = model.load_vgg_model(VGG_MODEL, IMAGE_HEIGHT, IMAGE_WIDTH, 3)
-
-            # Initialize content image as input image
+            # Content image as input image
             initial_image = content_image
-
             # Initialize all variables
             sess.run(tf.global_variables_initializer())
             
             # Construct content_loss using content_image.
             sess.run(model['input'].assign(content_image))
             content_loss = content_loss_func(sess, model)
-            
+
             # Construct shape loss using content image
             sess.run(model["input"].assign(initial_image))
             dist_template_inf, content_dist_sum = distance_transform.dist_t(content_image)
-
-
-            	# take power of distance template
-            dist_template = np.power(dist_template_inf,6)
+            ### take power of distance template
+            dist_template = np.power(dist_template_inf,8)
             dist_template[dist_template>np.power(2,30)] = np.power(2,30)
-
+            print(dist_template.sum())
             shape_loss = shape_loss_func(sess, model, dist_template, content_dist_sum)
-
+    
             # Construct style_loss using style_image.
             sess.run(model['input'].assign(style_image))
             style_loss = style_loss_func(sess, model)
             
-            # Build the total loss.
+            # Instantiate equation 7 of the paper.
             total_loss = alpha * content_loss + beta * style_loss + gamma * shape_loss
- 
-            # Minimize the total_loss.
-            optimizer = tf.train.AdamOptimizer(2.0)
+    
+            # Then we minimize the total_loss, which is the equation 7.
+            optimizer = tf.train.AdamOptimizer(1.0)
             train_step = optimizer.minimize(total_loss)
     
             sess.run(tf.global_variables_initializer())
             sess.run(model['input'].assign(initial_image))
             for it in range(ITERATIONS+1):
-                sess.run(train_step)                
+                sess.run(train_step)
+                
                 if it%100 == 0:
                     # Print every 100 iteration.
                     mixed_image = sess.run(model['input'])
@@ -234,6 +264,8 @@ if __name__ == '__main__':
     
                     filename = OUTPUT_DIR + '/%d.jpg' % (it)
                     utility.save_image(filename, mixed_image, invert = result_invert)
-                    
+                if sess.run(total_loss) < 1:
+                    break
+        sess.close()
     end_time = time.time()
     print("Time taken = ", end_time - start_time)

@@ -1,27 +1,19 @@
 import numpy as np
 import cv2
 
-import skimage
-from skimage import color
-from skimage import morphology
-from skimage import io
-
-import matplotlib.pyplot as plt
-
-
 # Returns numpy array of input image (with channels last)
 def load_image(path_to_img, path_to_save, height, width, invert):
 
     # Open image
     image = cv2.imread(path_to_img, 1)   
 
-    # Resize image
-    image = cv2.resize(image, (width,height))
-    print("image resized to ", image.shape) 
-
     # Invert if necessary
     if invert == 1:
         image = 255.0-image
+
+    # Resize image
+    image = cv2.resize(image, (width,height))
+    print("image resized to ", image.shape) 
         
     # Add new axis
     image = image[np.newaxis,:,:,:]
