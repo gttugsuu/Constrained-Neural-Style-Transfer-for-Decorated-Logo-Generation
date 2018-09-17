@@ -52,7 +52,7 @@ result_invert = content_invert
 # Number of iterations to run.
 ITERATIONS = 5000
 # path to weights of VGG-19 model
-VGG_MODEL = "../imagenet-vgg-verydeep-19.mat"
+VGG_MODEL = "imagenet-vgg-verydeep-19.mat"
 # The mean to subtract from the input to the VGG model. 
 MEAN_VALUES = np.array([123.68, 116.779, 103.939]).reshape((1,1,1,3))
 
@@ -142,11 +142,7 @@ def style_loss_func(sess, model):
         result = (1 / (4 * N**2 * M**2)) * tf.reduce_sum(tf.pow(G - A, 2))
         return result
 
-    # Layers to use. We will use these layers as advised in the paper.
-    # To have softer features, increase the weight of the higher layers
-    # (conv5_1) and decrease the weight of the lower layers (conv1_1).
-    # To have harder features, decrease the weight of the higher layers
-    # (conv5_1) and increase the weight of the lower layers (conv1_1).
+    # Style layers to use
     layers = [
             ('conv1_2', w1),
             ('conv2_2', w2),
