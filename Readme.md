@@ -5,11 +5,37 @@ This is the repository for the implementation of ["Constrained Neural Style Tran
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Requirements](#requirements)
-3. [Running the code](#running-the-code)
-4. [Citation](#citation)
+2. [Results](#results)
+3. [Requirements](#requirements)
+4. [Running the code](#running-the-code)
 
 ## Introduction
+
+We propose "Distance transform loss" to be added upon the existing loss functions of neural style transfer. The "Distance transform loss" is the difference between distance transform images of the content image and generated image.
+
+|   |  |
+| ------------- | ------------- |
+| ![Distance Transform](for_readme/distance_transform.PNG)   | ![Distance Transform Loss](for_readme/distance_transform_loss.PNG)  |
+
+We added the "Distance transform loss" onto the neural style transfer network.
+
+![VGG Network](for_readme/network.PNG)
+
+## Results
+
+
+
+| Content image   | Style image  | Generated image |
+| :-------------: | :-------------: | :-------------: |
+| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans1_flower.jpg" alt="drawing" width="200" height="200"/>
+
+|  |  |  |
+| :-------------: | :-------------: | :-------------: |
+| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans1_flower.jpg" alt="drawing" width="200" height="200"/>
+
+|  |  |  |
+| :-------------: | :-------------: | :-------------: |
+| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans1_flower.jpg" alt="drawing" width="200" height="200"/>
 
 
 ## Requirements
@@ -24,40 +50,20 @@ This is the repository for the implementation of ["Constrained Neural Style Tran
 
 * Matplotlib
 
-* Download the pre-trained weights for VGG network from [here](https://drive.google.com/open?id=1iF4oKdb-5-45AAmGIwaJyMNcjI9xJZ2i), and place on the main folder. (~500MB)
+* Download the pre-trained weights for VGG network from [here](https://drive.google.com/open?id=1iF4oKdb-5-45AAmGIwaJyMNcjI9xJZ2i), and place it on the main folder. (~500MB)
 
 ## Running the code
 
 ### Style transfer
-
 ```
 python StyleTransfer.py -CONTENT_IMAGE <path_to_content_image> -STYLE_IMAGE <path_to_style_image> 
 ```
-Other parser arguments:
+### Other parser arguments:
 ```
 alpha = 0.001 # Override with -alpha
 beta  = 0.8   # Override with -beta
-gamma = 0.001 # Override with -gamma
+gamma = 1e-11 # Override with -gamma
 IMAGE_WIDTH = 400 # Override with -width
 w1~w5 = 1 # Override with -w1 ~ -w5
 ```
 
-```
-python StyleTransfer.py -CONTENT_IMAGE input/contents/animal.jpg -STYLE_IMAGE input/styles/bells.jpg
-```
-
-## Citation
-
-B. K. Iwana, M. Mori, A. Kimura, and S. Uchida, "Introducing Local Distance-Based Features to Temporal Convolutional Neural Networks," in *Int. Conf. Frontiers in Handwriting Recognition*, 2018.
-
-G. Atarsaikhan, B. K. Iwana and S. Uchida "Constrained Neural Style Transfer for Decorated Logo Generation" in the proceedings of DAS2018.
-
-```
-@article{iwana2018introducing,
-  title={Introducing Local Distance-Based Features to Temporal Convolutional Neural Networks
-},
-  author={Iwana, Brian Kenji and Mori, Minoru and Kimura, Akisato and Uchida, Seiichi},
-  booktitle={Int. Conf. Frontiers in Handwriting Recognition},
-  year={2018}
-}
-```
