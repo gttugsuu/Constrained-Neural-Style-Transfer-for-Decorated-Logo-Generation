@@ -11,13 +11,13 @@ This is the repository for the implementation of ["Constrained Neural Style Tran
 
 ## Introduction
 
-We propose "Distance transform loss" to be added upon the existing loss functions of neural style transfer. The "Distance transform loss" is the difference between distance transform images of the content image and generated image.
+We propose "Distance transform loss" to be added upon the existing loss functions of neural style transfer. The "Distance transform loss" is the difference between distance transform images of the content image and generated image. 
 
 |   |  |
 | ------------- | ------------- |
 | ![Distance Transform](for_readme/distance_transform.PNG)   | ![Distance Transform Loss](for_readme/distance_transform_loss.PNG)  |
 
-We added the "Distance transform loss" onto the neural style transfer network.
+"Distance transform loss" is added onto the neural style transfer network.
 
 ![VGG Network](for_readme/network.PNG)
 
@@ -27,15 +27,15 @@ We added the "Distance transform loss" onto the neural style transfer network.
 
 | Content image   | Style image  | Generated image |
 | :-------------: | :-------------: | :-------------: |
-| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans1_flower.jpg" alt="drawing" width="200" height="200"/>
+| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans_flower.jpg" alt="drawing" width="200" height="200"/>
 
 |  |  |  |
 | :-------------: | :-------------: | :-------------: |
-| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans1_flower.jpg" alt="drawing" width="200" height="200"/>
+| <img src="input/contents/fruits.jpg" alt="drawing" width="200" height="200"/>   | <img src="input/styles/bells.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/fruits_bells.jpg" alt="drawing" width="200" height="200"/>
 
 |  |  |  |
 | :-------------: | :-------------: | :-------------: |
-| <img src="input/contents/humans1.bmp" alt="drawing" width="200" height="200"/>   | <img src="input/styles/colorful_flower.jpg" alt="drawing" width="200" height="200"/>   | <img src="for_readme/humans1_flower.jpg" alt="drawing" width="200" height="200"/>
+| <img src="input/font_contents/lab6.jpg" alt="drawing" width="200" height="200"/>   | <img src="input/styles/flower.png" alt="drawing" width="200" height="200"/>   | <img src="for_readme/lab6_flower.jpg" alt="drawing" width="200" height="200"/>
 
 
 ## Requirements
@@ -58,12 +58,13 @@ We added the "Distance transform loss" onto the neural style transfer network.
 ```
 python StyleTransfer.py -CONTENT_IMAGE <path_to_content_image> -STYLE_IMAGE <path_to_style_image> 
 ```
-### Other parser arguments:
+### Other default parser arguments:
 ```
-alpha = 0.001 # Override with -alpha
-beta  = 0.8   # Override with -beta
-gamma = 1e-11 # Override with -gamma
-IMAGE_WIDTH = 400 # Override with -width
-w1~w5 = 1 # Override with -w1 ~ -w5
+alpha = 0.001     # More emphasize on content loss. Override with -alpha
+beta  = 0.8       # More emphasize on style loss. Override with -beta
+gamma = 0.001     # More powerful constrain. Override with -gamma
+EPOCH = 5000      # Set the number of epochs to run. Override with -epoch
+IMAGE_WIDTH = 400 # Determine image size. Override with -width
+w1~w5 = 1         # Style layrs to use. Override with -w1 ~ -w5
 ```
 
