@@ -5,10 +5,9 @@ with shape of (1, height, width, 3)
 """
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 
 """
-Inputs a tensor with shape = (1, height, width, 3).
+Inputs (1, height, width, 3) tensor.
 Outputs (height, width) as grayscale image
 """
 
@@ -70,10 +69,33 @@ def dist_t(image):
 	# Sum of all elements in multiplied mult
 	dist_sum = np.sum(mult)
 
-	# savefig
-	# plt.imshow(dist_t_bg, cmap="Blues")
-	# plt.colorbar()
-	# plt.savefig("dist_template.png")
-
 	# return only dist_t_g as dist_template, dist_sum
 	return dist_t_bg, dist_sum
+	
+"""
+Assign 1s to input image characters,
+and calculate distance loss as pixel wise
+"""
+
+def dist_loss(image, dist_template, orig_sum):
+
+	# Grayscale image
+	image_gray = numpy_to_image(image)
+	cv2.imwrite("image_gray.jpg", image_gray)
+
+	image_float = image_gray/255.0
+
+	# Multiply pixel-wise with dist1
+	mult = np.multiply(image_float, dist_template)
+
+	# Sum of all elements in multiplied mult
+	dist_sum = np.sum(mult)
+
+	# Absolute value of difference between orig_sum & dist_sum
+	dist_loss = abs(orig_sum - dist_sum)
+	
+	# with open("output.txt", "w") as f:
+	# 	f.write(dist_sum)
+	# 	f.write(dist_loss)
+
+	return dist_loss

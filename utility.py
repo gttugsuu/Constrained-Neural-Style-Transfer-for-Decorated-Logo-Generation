@@ -1,20 +1,21 @@
 import numpy as np
 import cv2
 
-# Returns numpy array of input image (with channels last)
-def load_image(path_to_img, path_to_save, height, width, invert):
 
+# Returns numpy array of input image (with channels last)
+def load_image(path_to_img, height, width, invert):
+    
     # Open image
     image = cv2.imread(path_to_img, 1)   
-
+    
     # Invert if necessary
     if invert == 1:
         image = 255.0-image
-
+    
     # Resize image
-    image = cv2.resize(image, (width,height))
+    image = cv2.resize(image, (height,width))
     print("image resized to ", image.shape) 
-        
+    
     # Add new axis
     image = image[np.newaxis,:,:,:]
     print("Image file shape is: ", image.shape)
