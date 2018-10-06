@@ -68,3 +68,15 @@ IMAGE_WIDTH = 400 # Determine image size. Override with -width
 w1~w5 = 1         # Style layrs to use. Override with -w1 ~ -w5
 ```
 
+## Citation
+
+G.Atarsaikhan, B.K.Iwana and S.Uchida, "Contained Neural Style Transfer for Decorated Logo Generation", In Proceedings - 13th IAPR International Workshop on Document Analysis Systems, 2018.
+
+```
+@article{contained_nst_2018,
+  title={Contained Neural Style Transfer for Decorated Logo Generation},
+  author={Atarsaikhan, Gantugs and Iwana, Brian Kenji and Uchida, Seiichi},
+  booktitle={13th IAPR International Workshop on Document Analysis Systems},
+  year={2018}
+}
+```
